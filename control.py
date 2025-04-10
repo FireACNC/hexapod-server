@@ -440,7 +440,7 @@ class Control:
         # restore z
         self.move_position(0, 0, 0)
 
-    def lift_legs(self, legs, Z = 150):
+    def lift_legs(self, legs, Z = 200):
         delay = 0.01
         for leg in legs:
             self.body_points[leg][2] = Z + self.body_height
