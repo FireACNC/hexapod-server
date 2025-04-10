@@ -441,8 +441,11 @@ class Control:
         points = self.calculate_posture_balance(roll, pitch, yaw)
         self.transform_coordinates(points)
         self.set_leg_angles()
+
         # restore z
-        # self.move_position(0, 0, 0)
+        # also resetting lifted limbs
+        time.sleep(delay * 2)
+        self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 200):
         delay = 0.01
