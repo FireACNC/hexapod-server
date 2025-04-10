@@ -424,7 +424,9 @@ class Control:
 
     def climb_stair(self):
         delay = 0.5
-        self.move_position(0, 0, -20)
+        
+        # lower z to allow lifting up front legs
+        self.move_position(0, 0, -15)
         time.sleep(delay)
 
         front_left, front_right = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
@@ -435,6 +437,7 @@ class Control:
         self.stair_move(0)
         time.sleep(delay)
 
+        # restore z
         self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 150):
