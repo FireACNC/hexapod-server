@@ -426,21 +426,21 @@ class Control:
         delay = 0.5
         self.move_position(0, 0, -20)
         time.sleep(delay)
-        self.lift_pair(LegControl.FRONT)
-        time.sleep(delay)
 
-        self.stair_move(35, LegControl.FRONT)
-        self.stair_move(0)
-        time.sleep(delay)
+        front_left, front_right = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
+        for leg in (front_left, front_right):
+            self.lift_legs(leg)
+            time.sleep(delay)
+
+            self.stair_move(35, leg)
+            self.stair_move(0)
+            time.sleep(delay)
+            
         self.move_position(0, 0, 20)
 
-    def lift_pair(self, pair, Z = 100):
-        if not pair in LegControl.TRIPOD_PAIRS:
-            print("Invalid input pair")
-            return
-
+    def lift_legs(self, legs, Z = 150):
         delay = 0.01
-        for leg in LegControl.TRIPOD_PAIRS[pair]:
+        for leg in legs:
             self.body_points[leg][2] = Z + self.body_height
         self.transform_coordinates(self.body_points)
         self.set_leg_angles()
@@ -449,13 +449,14 @@ class Control:
 
     # Just ordinary move, but with y only
     # If specified, can make a pair of legs stay (not participate in moving)
-    def stair_move(self, forward_y, stay_tripod=-1):
+    def stair_move(self, forward_y, legs=None):
         x, y = 0, forward_y
         angle = 0
         F = 64
         Z = 40  # lift factor
         z = Z / F
         delay = 0.01
+        legs = set() if legs == None else legs
 
         points = copy.deepcopy(self.body_points)
         xy = [[0, 0] for _ in range(6)]
@@ -476,7 +477,7 @@ class Control:
                 leg_b = 2 * i + 1
 
                 # Handle leg_a
-                if stay_tripod in LegControl.TRIPOD_PAIRS and leg_a in LegControl.TRIPOD_PAIRS[stay_tripod]:
+                if leg_a in legs:
                     pass  # don't move
                 else:
                     if j < (F / 8):
@@ -500,7 +501,7 @@ class Control:
                         points[leg_a][1] -= 4 * xy[leg_a][1]
 
                 # Handle leg_b
-                if stay_tripod in LegControl.TRIPOD_PAIRS and leg_b in LegControl.TRIPOD_PAIRS[stay_tripod]:
+                if leg_b in legs:
                     pass  # don't move
                 else:
                     if j < (F / 8):
