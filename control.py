@@ -429,10 +429,10 @@ class Control:
         self.lift_pair(LegControl.FRONT)
         time.sleep(delay)
 
-        self.stair_move(35, self.FRONT)
+        self.stair_move(35, LegControl.FRONT)
         self.stair_move(0)
 
-    def lift_pair(self, pair, Z = 70):
+    def lift_pair(self, pair, Z = 100):
         if not pair in LegControl.TRIPOD_PAIRS:
             print("Invalid input pair")
             return
