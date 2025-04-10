@@ -431,6 +431,8 @@ class Control:
 
         self.stair_move(35, LegControl.FRONT)
         self.stair_move(0)
+        time.sleep(delay)
+        self.move_position(0, 0, 20)
 
     def lift_pair(self, pair, Z = 100):
         if not pair in LegControl.TRIPOD_PAIRS:
@@ -438,10 +440,9 @@ class Control:
             return
 
         delay = 0.01
-        points = copy.deepcopy(self.body_points)
         for leg in LegControl.TRIPOD_PAIRS[pair]:
-            points[leg][2] = Z + self.body_height  # lift before gait starts
-        self.transform_coordinates(points)
+            self.body_points[leg][2] = Z + self.body_height
+        self.transform_coordinates(self.body_points)
         self.set_leg_angles()
         time.sleep(delay)
 
