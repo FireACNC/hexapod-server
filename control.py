@@ -417,12 +417,17 @@ class Control:
 
         points = copy.deepcopy(self.body_points)
         xy = [[0, 0] for _ in range(6)]
+
+        if y == 0:
+            self.transform_coordinates(points)
+            self.set_leg_angles()
+            return
         
         # Movement deltas (same math from run_gait)
         for i in range(6):
             xy[i][0] = ((points[i][0] * math.cos(angle / 180 * math.pi) + points[i][1] * math.sin(angle / 180 * math.pi) - points[i][0]) + x) / F
             xy[i][1] = ((-points[i][0] * math.sin(angle / 180 * math.pi) + points[i][1] * math.cos(angle / 180 * math.pi) - points[i][1]) + y) / F
-
+        
         # Use the same tripod gait phasing as gait 1
         for j in range(F):
             for i in range(3):
@@ -479,7 +484,7 @@ class Control:
             self.transform_coordinates(points)
             self.set_leg_angles()
             time.sleep(delay)
-
+        
 
 if __name__ == '__main__':
     pass
