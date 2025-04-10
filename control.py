@@ -12,6 +12,10 @@ from imu import IMU
 from servo import Servo
 
 class Control:
+    FRONT = 1
+    MIDDLE = 2
+    BACK = 3
+
     def __init__(self):
         self.imu = IMU()
         self.servo = Servo()
@@ -166,7 +170,7 @@ class Control:
                     self.run_gait(self.command_queue)
                     self.status_flag = 0x03
             elif cmd.CMD_STAIR in self.command_queue:
-                self.stair_move(35)
+                self.stair_move(35, self.FRONT)
                 self.stair_move(0)
                 self.command_queue = ['', '', '', '', '', '']
             elif cmd.CMD_BALANCE in self.command_queue and len(self.command_queue) == 2:
@@ -407,7 +411,7 @@ class Control:
                     self.set_leg_angles()
                     time.sleep(delay)
 
-    def stair_move(self, forward_y):
+    def stair_move(self, forward_y, stay_tripod=0):
         x, y = 0, forward_y
         angle = 0
         F = 64
@@ -422,20 +426,34 @@ class Control:
             self.transform_coordinates(points)
             self.set_leg_angles()
             return
-        
-        # Movement deltas (same math from run_gait)
+
+        # Movement deltas
         for i in range(6):
             xy[i][0] = ((points[i][0] * math.cos(angle / 180 * math.pi) + points[i][1] * math.sin(angle / 180 * math.pi) - points[i][0]) + x) / F
             xy[i][1] = ((-points[i][0] * math.sin(angle / 180 * math.pi) + points[i][1] * math.cos(angle / 180 * math.pi) - points[i][1]) + y) / F
-        
-        # Use the same tripod gait phasing as gait 1
+
+        # Define leg pairs
+        TRIPOD_PAIRS = {
+            self.FRONT: [0, 1],  # FRONT: Left Front, Right Front
+            self.MIDDLE: [2, 3],  # MIDDLE: Left Middle, Right Middle
+            self.BACK: [4, 5],  # BACK: Left Back, Right Back
+        }
+
+        # Pre-lift stay_tripod if any
+        if stay_tripod in TRIPOD_PAIRS:
+            for leg in TRIPOD_PAIRS[stay_tripod]:
+                points[leg][2] += Z  # lift before gait starts
+
         for j in range(F):
             for i in range(3):
                 leg_a = 2 * i
                 leg_b = 2 * i + 1
 
+                # Skip gait logic for legs in stay_tripod
+                if stay_tripod in TRIPOD_PAIRS and (leg_a in TRIPOD_PAIRS[stay_tripod] or leg_b in TRIPOD_PAIRS[stay_tripod]):
+                    continue
+
                 if j < (F / 8):
-                    # Tripod B lifts and swings forward
                     points[leg_a][0] -= 4 * xy[leg_a][0]
                     points[leg_a][1] -= 4 * xy[leg_a][1]
                     points[leg_b][0] += 8 * xy[leg_b][0]
@@ -443,48 +461,41 @@ class Control:
                     points[leg_b][2] = Z + self.body_height
 
                 elif j < (F / 4):
-                    # Tripod B descends
                     points[leg_a][0] -= 4 * xy[leg_a][0]
                     points[leg_a][1] -= 4 * xy[leg_a][1]
                     points[leg_b][2] -= z * 8
 
                 elif j < (3 * F / 8):
-                    # Tripod A lifts
                     points[leg_a][2] += z * 8
                     points[leg_b][0] -= 4 * xy[leg_b][0]
                     points[leg_b][1] -= 4 * xy[leg_b][1]
 
                 elif j < (5 * F / 8):
-                    # Tripod A swings forward
                     points[leg_a][0] += 8 * xy[leg_a][0]
                     points[leg_a][1] += 8 * xy[leg_a][1]
                     points[leg_b][0] -= 4 * xy[leg_b][0]
                     points[leg_b][1] -= 4 * xy[leg_b][1]
 
                 elif j < (3 * F / 4):
-                    # Tripod A descends
                     points[leg_a][2] -= z * 8
                     points[leg_b][0] -= 4 * xy[leg_b][0]
                     points[leg_b][1] -= 4 * xy[leg_b][1]
 
                 elif j < (7 * F / 8):
-                    # Tripod B lifts again
                     points[leg_a][0] -= 4 * xy[leg_a][0]
                     points[leg_a][1] -= 4 * xy[leg_a][1]
                     points[leg_b][2] += z * 8
 
                 elif j < F:
-                    # Tripod B swings forward again
                     points[leg_a][0] -= 4 * xy[leg_a][0]
                     points[leg_a][1] -= 4 * xy[leg_a][1]
                     points[leg_b][0] += 8 * xy[leg_b][0]
                     points[leg_b][1] += 8 * xy[leg_b][1]
 
-            # Transform and send angles
             self.transform_coordinates(points)
             self.set_leg_angles()
             time.sleep(delay)
-        
+
 
 if __name__ == '__main__':
     pass
