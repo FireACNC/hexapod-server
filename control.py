@@ -428,15 +428,14 @@ class Control:
         time.sleep(delay)
 
         front_left, front_right = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
-        for leg in (front_left, front_right):
-            self.lift_legs([leg])
-            time.sleep(delay)
+        self.lift_legs([front_left, front_right])
+        time.sleep(delay)
 
-            self.stair_move(35, [leg])
-            self.stair_move(0)
-            time.sleep(delay)
+        self.stair_move(35, [front_left, front_right])
+        self.stair_move(0)
+        time.sleep(delay)
 
-        self.move_position(0, 0, 20)
+        self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 150):
         delay = 0.01
@@ -449,14 +448,14 @@ class Control:
 
     # Just ordinary move, but with y only
     # If specified, can make a pair of legs stay (not participate in moving)
-    def stair_move(self, forward_y, legs=None):
+    def stair_move(self, forward_y, fixed_legs=None):
         x, y = 0, forward_y
         angle = 0
         F = 64
         Z = 40  # lift factor
         z = Z / F
         delay = 0.01
-        legs = [] if legs == None else legs
+        fixed_legs = [] if fixed_legs == None else fixed_legs
 
         points = copy.deepcopy(self.body_points)
         xy = [[0, 0] for _ in range(6)]
@@ -477,7 +476,7 @@ class Control:
                 leg_b = 2 * i + 1
 
                 # Handle leg_a
-                if leg_a in legs:
+                if leg_a in fixed_legs:
                     pass  # don't move
                 else:
                     if j < (F / 8):
@@ -501,7 +500,7 @@ class Control:
                         points[leg_a][1] -= 4 * xy[leg_a][1]
 
                 # Handle leg_b
-                if leg_b in legs:
+                if leg_b in fixed_legs:
                     pass  # don't move
                 else:
                     if j < (F / 8):
