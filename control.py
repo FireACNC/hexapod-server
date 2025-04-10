@@ -429,13 +429,13 @@ class Control:
 
         front_left, front_right = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         for leg in (front_left, front_right):
-            self.lift_legs(leg)
+            self.lift_legs([leg])
             time.sleep(delay)
 
-            self.stair_move(35, leg)
+            self.stair_move(35, [leg])
             self.stair_move(0)
             time.sleep(delay)
-            
+
         self.move_position(0, 0, 20)
 
     def lift_legs(self, legs, Z = 150):
@@ -456,7 +456,7 @@ class Control:
         Z = 40  # lift factor
         z = Z / F
         delay = 0.01
-        legs = set() if legs == None else legs
+        legs = [] if legs == None else legs
 
         points = copy.deepcopy(self.body_points)
         xy = [[0, 0] for _ in range(6)]
