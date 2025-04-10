@@ -434,6 +434,7 @@ class Control:
         time.sleep(delay)
 
         self.stair_move(35, [front_left, front_right])
+        self.stair_move(35, [front_left, front_right])
         self.stair_move(0)
         time.sleep(delay)
 
