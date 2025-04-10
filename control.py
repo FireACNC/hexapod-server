@@ -11,11 +11,18 @@ from command import COMMAND as cmd
 from imu import IMU
 from servo import Servo
 
-class Control:
-    FRONT = 1
-    MIDDLE = 2
-    BACK = 3
+class LegControl:
+    FRONT = 0
+    MIDDLE = 1
+    BACK = 2
 
+    TRIPOD_PAIRS = {
+        FRONT: [0, 5],
+        MIDDLE: [1, 4],
+        BACK: [2, 3]
+    }
+
+class Control:
     def __init__(self):
         self.imu = IMU()
         self.servo = Servo()
@@ -169,10 +176,14 @@ class Control:
                         self.relax(False)
                     self.run_gait(self.command_queue)
                     self.status_flag = 0x03
+
             elif cmd.CMD_STAIR in self.command_queue:
-                self.stair_move(35, self.FRONT)
-                self.stair_move(0)
+                if self.status_flag != 0x10:
+                    self.relax(False)
+                self.climb_stair()
                 self.command_queue = ['', '', '', '', '', '']
+                self.status_flag = 0x10
+
             elif cmd.CMD_BALANCE in self.command_queue and len(self.command_queue) == 2:
                 if self.command_queue[1] == "1":
                     self.command_queue = ['', '', '', '', '', '']
@@ -411,7 +422,33 @@ class Control:
                     self.set_leg_angles()
                     time.sleep(delay)
 
-    def stair_move(self, forward_y, stay_tripod=0):
+    def climb_stair(self):
+        delay = 0.5
+        self.move_position(0, 0, -20)
+        time.sleep(delay)
+        self.lift_pair(LegControl.FRONT)
+        time.sleep(delay)
+
+        self.stair_move(35, self.FRONT)
+        self.stair_move(0)
+
+    def lift_pair(self, pair, Z = 70):
+        if not pair in LegControl.TRIPOD_PAIRS:
+            print("Invalid input pair")
+            return
+
+        delay = 0.01
+        points = copy.deepcopy(self.body_points)
+        for leg in LegControl.TRIPOD_PAIRS[pair]:
+            points[leg][2] = Z + self.body_height  # lift before gait starts
+        self.transform_coordinates(points)
+        self.set_leg_angles()
+        time.sleep(delay)
+
+
+    # Just ordinary move, but with y only
+    # If specified, can make a pair of legs stay (not participate in moving)
+    def stair_move(self, forward_y, stay_tripod=-1):
         x, y = 0, forward_y
         angle = 0
         F = 64
@@ -432,28 +469,13 @@ class Control:
             xy[i][0] = ((points[i][0] * math.cos(angle / 180 * math.pi) + points[i][1] * math.sin(angle / 180 * math.pi) - points[i][0]) + x) / F
             xy[i][1] = ((-points[i][0] * math.sin(angle / 180 * math.pi) + points[i][1] * math.cos(angle / 180 * math.pi) - points[i][1]) + y) / F
 
-        # Define leg pairs
-        TRIPOD_PAIRS = {
-            self.FRONT: [0, 5],  # FRONT: Left Front, Right Front
-            self.MIDDLE: [1, 4],  # MIDDLE: Left Middle, Right Middle
-            self.BACK: [2, 3],  # BACK: Left Back, Right Back
-        }
-
-        # Pre-lift stay_tripod if any
-        if stay_tripod in TRIPOD_PAIRS:
-            for leg in TRIPOD_PAIRS[stay_tripod]:
-                points[leg][2] = Z + self.body_height  # lift before gait starts
-            self.transform_coordinates(points)
-            self.set_leg_angles()
-            time.sleep(delay)
-
         for j in range(F):
             for i in range(3):
                 leg_a = 2 * i
                 leg_b = 2 * i + 1
 
                 # Handle leg_a
-                if stay_tripod in TRIPOD_PAIRS and leg_a in TRIPOD_PAIRS[stay_tripod]:
+                if stay_tripod in LegControl.TRIPOD_PAIRS and leg_a in LegControl.TRIPOD_PAIRS[stay_tripod]:
                     pass  # don't move
                 else:
                     if j < (F / 8):
@@ -477,7 +499,7 @@ class Control:
                         points[leg_a][1] -= 4 * xy[leg_a][1]
 
                 # Handle leg_b
-                if stay_tripod in TRIPOD_PAIRS and leg_b in TRIPOD_PAIRS[stay_tripod]:
+                if stay_tripod in LegControl.TRIPOD_PAIRS and leg_b in LegControl.TRIPOD_PAIRS[stay_tripod]:
                     pass  # don't move
                 else:
                     if j < (F / 8):
