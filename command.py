@@ -1,5 +1,6 @@
 class COMMAND:
     CMD_MOVE = "CMD_MOVE"
+    CMD_STAIR = "CMD_STAIR"
     CMD_LED_MOD = "CMD_LED_MOD"
     CMD_LED = "CMD_LED"
     CMD_SONIC = "CMD_SONIC"

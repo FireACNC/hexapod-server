@@ -165,6 +165,9 @@ class Control:
                         self.relax(False)
                     self.run_gait(self.command_queue)
                     self.status_flag = 0x03
+            elif cmd.CMD_STAIR in self.command_queue:
+                self.climb_stair()
+                self.command_queue = ['', '', '', '', '', '']
             elif cmd.CMD_BALANCE in self.command_queue and len(self.command_queue) == 2:
                 if self.command_queue[1] == "1":
                     self.command_queue = ['', '', '', '', '', '']
@@ -402,6 +405,81 @@ class Control:
                     self.transform_coordinates(points)
                     self.set_leg_angles()
                     time.sleep(delay)
+
+    def climb_stair(self):
+        forward_y = 25  # forward motion
+        x, y = 0, forward_y
+        angle = 0
+        F = 64
+        Z = 40  # lift factor
+        z = Z / F
+        delay = 0.01
+
+        points = copy.deepcopy(self.body_points)
+        xy = [[0, 0] for _ in range(6)]
+        
+        # Movement deltas (same math from run_gait)
+        for i in range(6):
+            xy[i][0] = ((points[i][0] * math.cos(angle / 180 * math.pi) + points[i][1] * math.sin(angle / 180 * math.pi) - points[i][0]) + x) / F
+            xy[i][1] = ((-points[i][0] * math.sin(angle / 180 * math.pi) + points[i][1] * math.cos(angle / 180 * math.pi) - points[i][1]) + y) / F
+
+        # Use the same tripod gait phasing as gait 1
+        for j in range(F):
+            for i in range(3):
+                leg_a = 2 * i
+                leg_b = 2 * i + 1
+
+                if j < (F / 8):
+                    # Tripod B lifts and swings forward
+                    points[leg_a][0] -= 4 * xy[leg_a][0]
+                    points[leg_a][1] -= 4 * xy[leg_a][1]
+                    points[leg_b][0] += 8 * xy[leg_b][0]
+                    points[leg_b][1] += 8 * xy[leg_b][1]
+                    points[leg_b][2] = Z + self.body_height
+
+                elif j < (F / 4):
+                    # Tripod B descends
+                    points[leg_a][0] -= 4 * xy[leg_a][0]
+                    points[leg_a][1] -= 4 * xy[leg_a][1]
+                    points[leg_b][2] -= z * 8
+
+                elif j < (3 * F / 8):
+                    # Tripod A lifts
+                    points[leg_a][2] += z * 8
+                    points[leg_b][0] -= 4 * xy[leg_b][0]
+                    points[leg_b][1] -= 4 * xy[leg_b][1]
+
+                elif j < (5 * F / 8):
+                    # Tripod A swings forward
+                    points[leg_a][0] += 8 * xy[leg_a][0]
+                    points[leg_a][1] += 8 * xy[leg_a][1]
+                    points[leg_b][0] -= 4 * xy[leg_b][0]
+                    points[leg_b][1] -= 4 * xy[leg_b][1]
+
+                elif j < (3 * F / 4):
+                    # Tripod A descends
+                    points[leg_a][2] -= z * 8
+                    points[leg_b][0] -= 4 * xy[leg_b][0]
+                    points[leg_b][1] -= 4 * xy[leg_b][1]
+
+                elif j < (7 * F / 8):
+                    # Tripod B lifts again
+                    points[leg_a][0] -= 4 * xy[leg_a][0]
+                    points[leg_a][1] -= 4 * xy[leg_a][1]
+                    points[leg_b][2] += z * 8
+
+                elif j < F:
+                    # Tripod B swings forward again
+                    points[leg_a][0] -= 4 * xy[leg_a][0]
+                    points[leg_a][1] -= 4 * xy[leg_a][1]
+                    points[leg_b][0] += 8 * xy[leg_b][0]
+                    points[leg_b][1] += 8 * xy[leg_b][1]
+
+            # Transform and send angles
+            self.transform_coordinates(points)
+            self.set_leg_angles()
+            time.sleep(delay)
+
 
 if __name__ == '__main__':
     pass
