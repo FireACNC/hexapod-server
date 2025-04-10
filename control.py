@@ -166,7 +166,8 @@ class Control:
                     self.run_gait(self.command_queue)
                     self.status_flag = 0x03
             elif cmd.CMD_STAIR in self.command_queue:
-                self.climb_stair()
+                self.stair_move(35)
+                self.stair_move(0)
                 self.command_queue = ['', '', '', '', '', '']
             elif cmd.CMD_BALANCE in self.command_queue and len(self.command_queue) == 2:
                 if self.command_queue[1] == "1":
@@ -406,8 +407,7 @@ class Control:
                     self.set_leg_angles()
                     time.sleep(delay)
 
-    def climb_stair(self):
-        forward_y = 25  # forward motion
+    def stair_move(self, forward_y):
         x, y = 0, forward_y
         angle = 0
         F = 64
