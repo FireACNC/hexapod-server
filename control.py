@@ -442,7 +442,7 @@ class Control:
         self.transform_coordinates(points)
         self.set_leg_angles()
         # restore z
-        self.move_position(0, 0, 0)
+        # self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 200):
         delay = 0.01
