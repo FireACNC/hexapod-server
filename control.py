@@ -434,63 +434,72 @@ class Control:
 
         # Define leg pairs
         TRIPOD_PAIRS = {
-            self.FRONT: [0, 1],  # FRONT: Left Front, Right Front
-            self.MIDDLE: [2, 3],  # MIDDLE: Left Middle, Right Middle
-            self.BACK: [4, 5],  # BACK: Left Back, Right Back
+            self.FRONT: [0, 5],  # FRONT: Left Front, Right Front
+            self.MIDDLE: [1, 4],  # MIDDLE: Left Middle, Right Middle
+            self.BACK: [2, 3],  # BACK: Left Back, Right Back
         }
 
         # Pre-lift stay_tripod if any
         if stay_tripod in TRIPOD_PAIRS:
             for leg in TRIPOD_PAIRS[stay_tripod]:
-                points[leg][2] += Z  # lift before gait starts
+                points[leg][2] = Z + self.body_height  # lift before gait starts
+            self.transform_coordinates(points)
+            self.set_leg_angles()
+            time.sleep(delay)
 
         for j in range(F):
             for i in range(3):
                 leg_a = 2 * i
                 leg_b = 2 * i + 1
 
-                # Skip gait logic for legs in stay_tripod
-                if stay_tripod in TRIPOD_PAIRS and (leg_a in TRIPOD_PAIRS[stay_tripod] or leg_b in TRIPOD_PAIRS[stay_tripod]):
-                    continue
+                # Handle leg_a
+                if stay_tripod in TRIPOD_PAIRS and leg_a in TRIPOD_PAIRS[stay_tripod]:
+                    pass  # don't move
+                else:
+                    if j < (F / 8):
+                        points[leg_a][0] -= 4 * xy[leg_a][0]
+                        points[leg_a][1] -= 4 * xy[leg_a][1]
+                    elif j < (F / 4):
+                        points[leg_a][0] -= 4 * xy[leg_a][0]
+                        points[leg_a][1] -= 4 * xy[leg_a][1]
+                    elif j < (3 * F / 8):
+                        points[leg_a][2] += z * 8
+                    elif j < (5 * F / 8):
+                        points[leg_a][0] += 8 * xy[leg_a][0]
+                        points[leg_a][1] += 8 * xy[leg_a][1]
+                    elif j < (3 * F / 4):
+                        points[leg_a][2] -= z * 8
+                    elif j < (7 * F / 8):
+                        points[leg_a][0] -= 4 * xy[leg_a][0]
+                        points[leg_a][1] -= 4 * xy[leg_a][1]
+                    elif j < F:
+                        points[leg_a][0] -= 4 * xy[leg_a][0]
+                        points[leg_a][1] -= 4 * xy[leg_a][1]
 
-                if j < (F / 8):
-                    points[leg_a][0] -= 4 * xy[leg_a][0]
-                    points[leg_a][1] -= 4 * xy[leg_a][1]
-                    points[leg_b][0] += 8 * xy[leg_b][0]
-                    points[leg_b][1] += 8 * xy[leg_b][1]
-                    points[leg_b][2] = Z + self.body_height
-
-                elif j < (F / 4):
-                    points[leg_a][0] -= 4 * xy[leg_a][0]
-                    points[leg_a][1] -= 4 * xy[leg_a][1]
-                    points[leg_b][2] -= z * 8
-
-                elif j < (3 * F / 8):
-                    points[leg_a][2] += z * 8
-                    points[leg_b][0] -= 4 * xy[leg_b][0]
-                    points[leg_b][1] -= 4 * xy[leg_b][1]
-
-                elif j < (5 * F / 8):
-                    points[leg_a][0] += 8 * xy[leg_a][0]
-                    points[leg_a][1] += 8 * xy[leg_a][1]
-                    points[leg_b][0] -= 4 * xy[leg_b][0]
-                    points[leg_b][1] -= 4 * xy[leg_b][1]
-
-                elif j < (3 * F / 4):
-                    points[leg_a][2] -= z * 8
-                    points[leg_b][0] -= 4 * xy[leg_b][0]
-                    points[leg_b][1] -= 4 * xy[leg_b][1]
-
-                elif j < (7 * F / 8):
-                    points[leg_a][0] -= 4 * xy[leg_a][0]
-                    points[leg_a][1] -= 4 * xy[leg_a][1]
-                    points[leg_b][2] += z * 8
-
-                elif j < F:
-                    points[leg_a][0] -= 4 * xy[leg_a][0]
-                    points[leg_a][1] -= 4 * xy[leg_a][1]
-                    points[leg_b][0] += 8 * xy[leg_b][0]
-                    points[leg_b][1] += 8 * xy[leg_b][1]
+                # Handle leg_b
+                if stay_tripod in TRIPOD_PAIRS and leg_b in TRIPOD_PAIRS[stay_tripod]:
+                    pass  # don't move
+                else:
+                    if j < (F / 8):
+                        points[leg_b][0] += 8 * xy[leg_b][0]
+                        points[leg_b][1] += 8 * xy[leg_b][1]
+                        points[leg_b][2] = Z + self.body_height
+                    elif j < (F / 4):
+                        points[leg_b][2] -= z * 8
+                    elif j < (3 * F / 8):
+                        points[leg_b][0] -= 4 * xy[leg_b][0]
+                        points[leg_b][1] -= 4 * xy[leg_b][1]
+                    elif j < (5 * F / 8):
+                        points[leg_b][0] -= 4 * xy[leg_b][0]
+                        points[leg_b][1] -= 4 * xy[leg_b][1]
+                    elif j < (3 * F / 4):
+                        points[leg_b][0] -= 4 * xy[leg_b][0]
+                        points[leg_b][1] -= 4 * xy[leg_b][1]
+                    elif j < (7 * F / 8):
+                        points[leg_b][2] += z * 8
+                    elif j < F:
+                        points[leg_b][0] += 8 * xy[leg_b][0]
+                        points[leg_b][1] += 8 * xy[leg_b][1]
 
             self.transform_coordinates(points)
             self.set_leg_angles()
