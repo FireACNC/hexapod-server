@@ -437,6 +437,10 @@ class Control:
         self.stair_move(0)
         time.sleep(delay)
 
+        roll, pitch, yaw = 0, -15, 0
+        points = self.calculate_posture_balance(roll, pitch, yaw)
+        self.transform_coordinates(points)
+        self.set_leg_angles()
         # restore z
         self.move_position(0, 0, 0)
 
