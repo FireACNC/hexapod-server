@@ -545,7 +545,7 @@ class Control:
                             points[k][1] -= 2 * xy[k][1]
                     self.transform_coordinates(points)
                     self.set_leg_angles()
-                    time.sleep(delay)
+                    time.sleep(delay * 5)
         
         elif gait == 3:
             for j in range(F):
