@@ -452,7 +452,7 @@ class Control:
         Z = 40  # lift factor
         z = Z / F
         delay = 0.01
-        fixed_legs = [] if fixed_legs == None else fixed_legs
+        fixed_legs = [] if fixed_legs is None else fixed_legs
 
         points = copy.deepcopy(self.body_points)
         xy = [[0, 0] for _ in range(6)]
@@ -470,66 +470,84 @@ class Control:
         if gait == 1:
             for j in range(F):
                 for pair_idx, (leg_a, leg_b) in enumerate(LegControl.TRIPOD_PAIRS.values()):
+                    # Skip if both legs in pair are fixed
+                    if leg_a in fixed_legs and leg_b in fixed_legs:
+                        continue
+                        
                     # Each pair gets its own phase based on pair_idx
                     phase_offset = pair_idx * (F // 3)
                     current_phase = (j + phase_offset) % F
                     
                     if current_phase < (F / 8):
                         # Both legs in pair move backward (stance)
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
-                        points[leg_a][2] = points[leg_a][2]  # No Z change
-                        points[leg_b][2] = points[leg_b][2]  # No Z change
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
                     elif current_phase < (F / 4):
                         # Leg A lifts while Leg B continues stance
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
-                        points[leg_a][2] = points[leg_a][2] + z * 8  # Lift
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                            points[leg_a][2] = points[leg_a][2] + z * 8  # Lift
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
                     elif current_phase < (3 * F / 8):
                         # Leg A swings forward while lifted, Leg B stance
-                        points[leg_a][0] = points[leg_a][0] + 8 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] + 8 * xy[leg_a][1]
-                        points[leg_a][2] = Z + self.body_height  # Maintain lift
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] + 8 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] + 8 * xy[leg_a][1]
+                            points[leg_a][2] = Z + self.body_height  # Maintain lift
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
                     elif current_phase < (F / 2):
                         # Leg A lowers, Leg B continues stance
-                        points[leg_a][0] = points[leg_a][0] + 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] + 4 * xy[leg_a][1]
-                        points[leg_a][2] = points[leg_a][2] - z * 8  # Lower
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] + 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] + 4 * xy[leg_a][1]
+                            points[leg_a][2] = points[leg_a][2] - z * 8  # Lower
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
                     elif current_phase < (5 * F / 8):
                         # Now Leg B lifts while Leg A does stance
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
-                        points[leg_b][2] = points[leg_b][2] + z * 8  # Lift
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
+                            points[leg_b][2] = points[leg_b][2] + z * 8  # Lift
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
                     elif current_phase < (3 * F / 4):
                         # Leg B swings forward while lifted, Leg A stance
-                        points[leg_b][0] = points[leg_b][0] + 8 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] + 8 * xy[leg_b][1]
-                        points[leg_b][2] = Z + self.body_height  # Maintain lift
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] + 8 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] + 8 * xy[leg_b][1]
+                            points[leg_b][2] = Z + self.body_height  # Maintain lift
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
                     elif current_phase < (7 * F / 8):
                         # Leg B lowers, Leg A continues stance
-                        points[leg_b][0] = points[leg_b][0] + 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] + 4 * xy[leg_b][1]
-                        points[leg_b][2] = points[leg_b][2] - z * 8  # Lower
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] + 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] + 4 * xy[leg_b][1]
+                            points[leg_b][2] = points[leg_b][2] - z * 8  # Lower
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
                     else:
                         # Both legs in stance
-                        points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
-                        points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
-                        points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
-                        points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
+                        if leg_a not in fixed_legs:
+                            points[leg_a][0] = points[leg_a][0] - 4 * xy[leg_a][0]
+                            points[leg_a][1] = points[leg_a][1] - 4 * xy[leg_a][1]
+                        if leg_b not in fixed_legs:
+                            points[leg_b][0] = points[leg_b][0] - 4 * xy[leg_b][0]
+                            points[leg_b][1] = points[leg_b][1] - 4 * xy[leg_b][1]
 
                 self.transform_coordinates(points)
                 self.set_leg_angles()
@@ -561,11 +579,11 @@ class Control:
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         # lower z to allow lifting up front legs
-        self.move_position(0, 0, 80)
+        # self.move_position(0, 0, 80)
         time.sleep(delay)
 
-        # self.lift_legs([front_left])
-        # time.sleep(delay)
+        self.lift_legs([front_left])
+        time.sleep(delay)
 
         for _ in range(2):
             self.stair_move(35, [front_left])
