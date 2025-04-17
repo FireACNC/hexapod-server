@@ -437,31 +437,39 @@ class Control:
     def climb_stair(self):
         delay = 2
     
-        front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
+        front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         # lower z to allow lifting up front legs
         self.move_position(0, 0, 80)
         time.sleep(delay)
 
-        self.lift_legs([front_pair[0]])
+        self.lift_legs([front_left])
         time.sleep(delay)
 
-        # self.stair_move(35, front_pair)
-        # self.stair_move(35, front_pair)
-        # self.stair_move(0)
-        # time.sleep(delay)
+        self.stair_move(35, [front_left])
+        self.stair_move(35, [front_left])
+        self.stair_move(0)
+        time.sleep(delay)
+
+        self.lift_legs([front_right])
+        time.sleep(delay)
+
+        self.stair_move(35, front_pair)
+        self.stair_move(0)
+        time.sleep(delay)
 
         # roll, pitch, yaw = 0, -15, 0
         # points = self.calculate_posture_balance(roll, pitch, yaw)
         # self.transform_coordinates(points)
         # self.set_leg_angles()
 
-        # restore z
-        # also resetting lifted limbs
+        
         time.sleep(delay * 2)
 
         # self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
         # time.sleep(delay * 2)
 
+        # restore z
+        # also resetting lifted limbs
         self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 200):
