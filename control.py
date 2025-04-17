@@ -579,7 +579,7 @@ class Control:
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         # lower z to allow lifting up front legs
-        # self.move_position(0, 0, 80)
+        self.move_position(0, 0, 80)
         time.sleep(delay)
 
         self.lift_legs([front_left])
