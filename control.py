@@ -465,6 +465,10 @@ class Control:
         time.sleep(delay * 2)
         self.move_leg_positions(0, 0, 40, LegControl.TRIPOD_PAIRS[LegControl.BACK])
         time.sleep(delay * 2)
+        self.move_leg_positions(0, 0, 60, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+        time.sleep(delay * 2)
+        self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+        time.sleep(delay * 2)
 
         self.move_position(0, 0, 0)
 
