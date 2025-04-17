@@ -435,7 +435,7 @@ class Control:
         self.set_leg_angles()
 
     def climb_stair(self):
-        delay = 2
+        delay = 0.5
     
         # pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         # # lower z to allow lifting up front legs
@@ -459,7 +459,7 @@ class Control:
         # # also resetting lifted limbs
         # time.sleep(delay * 2)
 
-        self.move_leg_positions(0, 0, -10, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+        self.move_leg_positions(0, 0, -20, LegControl.TRIPOD_PAIRS[LegControl.BACK])
         time.sleep(delay * 2)
         self.move_leg_positions(0, 0, 20, LegControl.TRIPOD_PAIRS[LegControl.BACK])
         time.sleep(delay * 2)
