@@ -582,18 +582,13 @@ class Control:
         # self.move_position(0, 0, 80)
         # time.sleep(delay)
 
-        self.lift_legs([front_left])
+        self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+        time.sleep(delay)
+
+        self.lift_legs(front_pair)
         time.sleep(delay)
 
         for _ in range(3):
-            self.stair_move(35, [front_left])
-        self.stair_move(0)
-        time.sleep(delay)
-
-        self.lift_legs([front_right])
-        time.sleep(delay)
-
-        for _ in range(2):
             self.stair_move(35, front_pair)
         self.stair_move(0)
         time.sleep(delay)
