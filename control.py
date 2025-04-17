@@ -564,10 +564,10 @@ class Control:
         self.move_position(0, 0, 80)
         time.sleep(delay)
 
-        self.lift_legs([front_left])
-        time.sleep(delay)
+        # self.lift_legs([front_left])
+        # time.sleep(delay)
 
-        for _ in range(5):
+        for _ in range(2):
             self.stair_move(35, [front_left])
         self.stair_move(0)
         time.sleep(delay)
