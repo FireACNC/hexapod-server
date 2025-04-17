@@ -462,9 +462,6 @@ class Control:
         # self.transform_coordinates(points)
         # self.set_leg_angles()
 
-        
-        time.sleep(delay * 2)
-
         # self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
         # time.sleep(delay * 2)
 
@@ -505,63 +502,85 @@ class Control:
             xy[i][0] = ((points[i][0] * math.cos(angle / 180 * math.pi) + points[i][1] * math.sin(angle / 180 * math.pi) - points[i][0]) + x) / F
             xy[i][1] = ((-points[i][0] * math.sin(angle / 180 * math.pi) + points[i][1] * math.cos(angle / 180 * math.pi) - points[i][1]) + y) / F
 
-        for j in range(F):
-            for i in range(3):
-                leg_a = 2 * i
-                leg_b = 2 * i + 1
+        # gait 1
+        # for j in range(F):
+        #     for i in range(3):
+        #         leg_a = 2 * i
+        #         leg_b = 2 * i + 1
 
-                # Handle leg_a
-                if leg_a in fixed_legs:
-                    pass  # don't move
-                else:
-                    if j < (F / 8):
-                        points[leg_a][0] -= 4 * xy[leg_a][0]
-                        points[leg_a][1] -= 4 * xy[leg_a][1]
-                    elif j < (F / 4):
-                        points[leg_a][0] -= 4 * xy[leg_a][0]
-                        points[leg_a][1] -= 4 * xy[leg_a][1]
-                    elif j < (3 * F / 8):
-                        points[leg_a][2] += z * 8
-                    elif j < (5 * F / 8):
-                        points[leg_a][0] += 8 * xy[leg_a][0]
-                        points[leg_a][1] += 8 * xy[leg_a][1]
-                    elif j < (3 * F / 4):
-                        points[leg_a][2] -= z * 8
-                    elif j < (7 * F / 8):
-                        points[leg_a][0] -= 4 * xy[leg_a][0]
-                        points[leg_a][1] -= 4 * xy[leg_a][1]
-                    elif j < F:
-                        points[leg_a][0] -= 4 * xy[leg_a][0]
-                        points[leg_a][1] -= 4 * xy[leg_a][1]
+        #         # Handle leg_a
+        #         if leg_a in fixed_legs:
+        #             pass  # don't move
+        #         else:
+        #             if j < (F / 8):
+        #                 points[leg_a][0] -= 4 * xy[leg_a][0]
+        #                 points[leg_a][1] -= 4 * xy[leg_a][1]
+        #             elif j < (F / 4):
+        #                 points[leg_a][0] -= 4 * xy[leg_a][0]
+        #                 points[leg_a][1] -= 4 * xy[leg_a][1]
+        #             elif j < (3 * F / 8):
+        #                 points[leg_a][2] += z * 8
+        #             elif j < (5 * F / 8):
+        #                 points[leg_a][0] += 8 * xy[leg_a][0]
+        #                 points[leg_a][1] += 8 * xy[leg_a][1]
+        #             elif j < (3 * F / 4):
+        #                 points[leg_a][2] -= z * 8
+        #             elif j < (7 * F / 8):
+        #                 points[leg_a][0] -= 4 * xy[leg_a][0]
+        #                 points[leg_a][1] -= 4 * xy[leg_a][1]
+        #             elif j < F:
+        #                 points[leg_a][0] -= 4 * xy[leg_a][0]
+        #                 points[leg_a][1] -= 4 * xy[leg_a][1]
 
-                # Handle leg_b
-                if leg_b in fixed_legs:
-                    pass  # don't move
-                else:
-                    if j < (F / 8):
-                        points[leg_b][0] += 8 * xy[leg_b][0]
-                        points[leg_b][1] += 8 * xy[leg_b][1]
-                        points[leg_b][2] = Z + self.body_height
-                    elif j < (F / 4):
-                        points[leg_b][2] -= z * 8
-                    elif j < (3 * F / 8):
-                        points[leg_b][0] -= 4 * xy[leg_b][0]
-                        points[leg_b][1] -= 4 * xy[leg_b][1]
-                    elif j < (5 * F / 8):
-                        points[leg_b][0] -= 4 * xy[leg_b][0]
-                        points[leg_b][1] -= 4 * xy[leg_b][1]
-                    elif j < (3 * F / 4):
-                        points[leg_b][0] -= 4 * xy[leg_b][0]
-                        points[leg_b][1] -= 4 * xy[leg_b][1]
-                    elif j < (7 * F / 8):
-                        points[leg_b][2] += z * 8
-                    elif j < F:
-                        points[leg_b][0] += 8 * xy[leg_b][0]
-                        points[leg_b][1] += 8 * xy[leg_b][1]
+        #         # Handle leg_b
+        #         if leg_b in fixed_legs:
+        #             pass  # don't move
+        #         else:
+        #             if j < (F / 8):
+        #                 points[leg_b][0] += 8 * xy[leg_b][0]
+        #                 points[leg_b][1] += 8 * xy[leg_b][1]
+        #                 points[leg_b][2] = Z + self.body_height
+        #             elif j < (F / 4):
+        #                 points[leg_b][2] -= z * 8
+        #             elif j < (3 * F / 8):
+        #                 points[leg_b][0] -= 4 * xy[leg_b][0]
+        #                 points[leg_b][1] -= 4 * xy[leg_b][1]
+        #             elif j < (5 * F / 8):
+        #                 points[leg_b][0] -= 4 * xy[leg_b][0]
+        #                 points[leg_b][1] -= 4 * xy[leg_b][1]
+        #             elif j < (3 * F / 4):
+        #                 points[leg_b][0] -= 4 * xy[leg_b][0]
+        #                 points[leg_b][1] -= 4 * xy[leg_b][1]
+        #             elif j < (7 * F / 8):
+        #                 points[leg_b][2] += z * 8
+        #             elif j < F:
+        #                 points[leg_b][0] += 8 * xy[leg_b][0]
+        #                 points[leg_b][1] += 8 * xy[leg_b][1]
 
-            self.transform_coordinates(points)
-            self.set_leg_angles()
-            time.sleep(delay)
+        #     self.transform_coordinates(points)
+        #     self.set_leg_angles()
+        #     time.sleep(delay)
+        
+        # gait 2
+        number = [5, 2, 1, 0, 3, 4]
+        for i in range(6):
+            if number[i] in fixed_legs: continue
+            for j in range(int(F / 6)):
+                for k in range(6):
+                    if number[i] == k:
+                        if j < int(F / 18):
+                            points[k][2] += 18 * z
+                        elif j < int(F / 9):
+                            points[k][0] += 30 * xy[k][0]
+                            points[k][1] += 30 * xy[k][1]
+                        elif j < int(F / 6):
+                            points[k][2] -= 18 * z
+                    else:
+                        points[k][0] -= 2 * xy[k][0]
+                        points[k][1] -= 2 * xy[k][1]
+                self.transform_coordinates(points)
+                self.set_leg_angles()
+                time.sleep(delay)
 
 
 if __name__ == '__main__':
