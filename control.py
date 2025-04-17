@@ -558,12 +558,12 @@ class Control:
         self.stair_move(0)
         time.sleep(delay)
 
-        self.lift_legs([front_right])
-        time.sleep(delay)
+        # self.lift_legs([front_right])
+        # time.sleep(delay)
 
-        self.stair_move(35, front_pair)
-        self.stair_move(0)
-        time.sleep(delay)
+        # self.stair_move(35, front_pair)
+        # self.stair_move(0)
+        # time.sleep(delay)
 
         # roll, pitch, yaw = 0, -15, 0
         # points = self.calculate_posture_balance(roll, pitch, yaw)
