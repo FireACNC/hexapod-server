@@ -633,38 +633,159 @@ class Control:
                 self.set_leg_angles()
                 time.sleep(delay)
 
-    def climb_stair(self):
-        delay = 2
+    def get_supporting_legs(self, lifted_legs):
+        """Return list of legs currently on the ground"""
+        return [i for i in range(6) if i not in lifted_legs]
     
-        front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
-        # lower z to allow lifting up front legs
-        # self.move_position(0, 0, 80)
-        # time.sleep(delay)
-
-        self.move_leg_positions(0, 0, 80, front_pair)
-        self.move_leg_positions(0, 0, 50, LegControl.TRIPOD_PAIRS[LegControl.MIDDLE])
-        time.sleep(delay)
-
-        self.lift_legs(front_pair)
-        time.sleep(delay)
-
-        for _ in range(3):
-            self.stair_move(35, front_pair)
-        self.stair_move(0)
-        time.sleep(delay)
-
-        # roll, pitch, yaw = 0, -15, 0
-        # points = self.calculate_posture_balance(roll, pitch, yaw)
-        # self.transform_coordinates(points)
-        # self.set_leg_angles()
-
-        self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
-        time.sleep(delay * 2)
-
-        # restore z
-        # also resetting lifted limbs
-        self.move_position(0, 0, 0)
-        self.stair_move(0)
+    def calculate_support_polygon(self, supporting_legs):
+        """Calculate the convex hull of supporting legs' positions"""
+        points = []
+        for leg in supporting_legs:
+            points.append((self.body_points[leg][0], self.body_points[leg][1]))
+        # Simple approximation - just use leg positions
+        return points
+    
+    def is_com_in_support(self, supporting_legs, tolerance=20):
+        """Check if center of mass is within support polygon"""
+        support_points = self.calculate_support_polygon(supporting_legs)
+        if len(support_points) < 3:
+            return False  # Need at least 3 legs for stable support
+            
+        com_x = sum(p[0] for p in support_points)/len(support_points)
+        com_y = sum(p[1] for p in support_points)/len(support_points)
+        
+        # Simple check - ensure COM is within bounds of support legs
+        min_x = min(p[0] for p in support_points)
+        max_x = max(p[0] for p in support_points)
+        min_y = min(p[1] for p in support_points)
+        max_y = max(p[1] for p in support_points)
+        
+        return (min_x - tolerance <= com_x <= max_x + tolerance and 
+                min_y - tolerance <= com_y <= max_y + tolerance)
+    
+    def balanced_move(self, x, y, z, lifted_legs=[], gait=1, max_steps=10):
+        """
+        Move while maintaining balance with specified legs lifted
+        Returns True if movement completed successfully
+        """
+        supporting_legs = self.get_supporting_legs(lifted_legs)
+        
+        # Adjust movement based on number of supporting legs
+        if len(supporting_legs) < 3:
+            print("Warning: Not enough legs on ground for stable movement")
+            return False
+            
+        # Split movement into smaller steps for better balance
+        step_size = 5  # mm per step
+        total_distance = math.sqrt(x**2 + y**2)
+        steps = min(max_steps, int(total_distance/step_size))
+        if steps == 0:
+            steps = 1
+            
+        dx, dy = x/steps, y/steps
+        dz = z/steps if z != 0 else 0
+        
+        for _ in range(steps):
+            # Check balance before moving
+            if not self.is_com_in_support(supporting_legs):
+                print("COM out of support polygon - adjusting...")
+                self.adjust_balance(supporting_legs)
+                
+            # Move only the supporting legs
+            points = copy.deepcopy(self.body_points)
+            for leg in supporting_legs:
+                points[leg][0] -= dx
+                points[leg][1] -= dy
+                points[leg][2] = -30 - dz
+                
+            self.transform_coordinates(points)
+            self.set_leg_angles()
+            time.sleep(0.1)
+            
+            # Use IMU to check if we're tipping
+            roll, pitch, _ = self.imu.update_imu_state()
+            if abs(roll) > 15 or abs(pitch) > 15:
+                print("Dangerous tilt detected - aborting step")
+                return False
+                
+        return True
+    
+    def adjust_balance(self, supporting_legs):
+        """Adjust body position to keep COM over support polygon"""
+        support_points = self.calculate_support_polygon(supporting_legs)
+        com_x = sum(p[0] for p in support_points)/len(support_points)
+        com_y = sum(p[1] for p in support_points)/len(support_points)
+        
+        # Calculate desired shift to center COM
+        current_com_x = sum(self.body_points[i][0] for i in supporting_legs)/len(supporting_legs)
+        current_com_y = sum(self.body_points[i][1] for i in supporting_legs)/len(supporting_legs)
+        
+        shift_x = com_x - current_com_x
+        shift_y = com_y - current_com_y
+        
+        # Apply gradual shift
+        points = copy.deepcopy(self.body_points)
+        for leg in supporting_legs:
+            points[leg][0] += shift_x * 0.2  # 20% of needed shift
+            points[leg][1] += shift_y * 0.2
+            
+        self.transform_coordinates(points)
+        self.set_leg_angles()
+        time.sleep(0.2)
+    
+    def climb_stair(self, step_height=150, step_depth=200):
+        """Improved stair climbing sequence"""
+        try:
+            # Phase 1: Prepare for climb - lower front and raise back
+            print("Phase 1: Preparing stance")
+            self.move_position(0, 0, 80)  # Lower body
+            time.sleep(1)
+            
+            # Phase 2: Lift front legs
+            print("Phase 2: Lifting front legs")
+            front_legs = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
+            self.lift_legs(front_legs, Z=step_height)
+            time.sleep(1)
+            
+            # Phase 3: Move body forward using middle/back legs
+            print("Phase 3: Moving body forward")
+            if not self.balanced_move(0, step_depth/2, 0, lifted_legs=front_legs):
+                print("Failed to move forward safely")
+                return False
+            time.sleep(1)
+            
+            # Phase 4: Place front legs on step
+            print("Phase 4: Placing front legs")
+            self.move_leg_positions(0, 0, -step_height, front_legs)
+            time.sleep(1)
+            
+            # Phase 5: Lift middle legs
+            print("Phase 5: Lifting middle legs")
+            middle_legs = LegControl.TRIPOD_PAIRS[LegControl.MIDDLE]
+            self.lift_legs(middle_legs, Z=step_height)
+            time.sleep(1)
+            
+            # Phase 6: Move body fully onto step
+            print("Phase 6: Final movement onto step")
+            if not self.balanced_move(0, step_depth/2, 0, 
+                                    lifted_legs=front_legs+middle_legs):
+                print("Failed final movement")
+                return False
+            time.sleep(1)
+            
+            # Phase 7: Place all legs down
+            print("Phase 7: Completing climb")
+            self.move_position(0, 0, 0)
+            time.sleep(1)
+            
+            print("Stair climb completed successfully!")
+            return True
+            
+        except Exception as e:
+            print(f"Error during stair climb: {e}")
+            # Emergency recovery - try to get all legs down
+            self.move_position(0, 0, 0)
+            return False
 
 
 if __name__ == '__main__':
