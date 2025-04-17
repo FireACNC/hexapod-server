@@ -422,31 +422,45 @@ class Control:
                     self.set_leg_angles()
                     time.sleep(delay)
 
+    # specified legs and move them only
+    def move_leg_positions(self, x, y, z, legs):
+        points = copy.deepcopy(self.body_points)
+        for i in legs:
+            points[i][0] = self.body_points[i][0] - x
+            points[i][1] = self.body_points[i][1] - y
+            points[i][2] = -30 - z
+            self.body_height = points[i][2]
+            self.body_points[i][2] = points[i][2]
+        self.transform_coordinates(points)
+        self.set_leg_angles()
+
     def climb_stair(self):
         delay = 2
-        
-        for key in LegControl.TRIPOD_PAIRS:
-            pair = LegControl.TRIPOD_PAIRS[key]
-            # lower z to allow lifting up front legs
-            self.move_position(0, 0, -15)
-            time.sleep(delay)
+    
+        # pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
+        # # lower z to allow lifting up front legs
+        # self.move_position(0, 0, -15)
+        # time.sleep(delay)
 
-            self.lift_legs(pair)
-            time.sleep(delay)
+        # self.lift_legs(pair)
+        # time.sleep(delay)
 
-            self.stair_move(35, pair)
-            self.stair_move(35, pair)
-            self.stair_move(0)
-            time.sleep(delay)
+        # self.stair_move(35, pair)
+        # self.stair_move(35, pair)
+        # self.stair_move(0)
+        # time.sleep(delay)
 
-            roll, pitch, yaw = 0, -15, 0
-            points = self.calculate_posture_balance(roll, pitch, yaw)
-            self.transform_coordinates(points)
-            self.set_leg_angles()
+        # roll, pitch, yaw = 0, -15, 0
+        # points = self.calculate_posture_balance(roll, pitch, yaw)
+        # self.transform_coordinates(points)
+        # self.set_leg_angles()
 
-            # restore z
-            # also resetting lifted limbs
-            time.sleep(delay * 2)
+        # # restore z
+        # # also resetting lifted limbs
+        # time.sleep(delay * 2)
+
+        self.move_leg_positions(0, 0, 20, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+
         self.move_position(0, 0, 0)
 
     def lift_legs(self, legs, Z = 200):
