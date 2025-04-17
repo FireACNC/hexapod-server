@@ -445,7 +445,7 @@ class Control:
 
     # Just ordinary move, but with y only
     # If specified, can make a pair of legs stay (not participate in moving)
-    def stair_move(self, forward_y, fixed_legs=None, gait=1):
+    def stair_move(self, forward_y, fixed_legs=None, gait=2):
         x, y = 0, forward_y
         angle = 0
         F = 64
@@ -637,7 +637,6 @@ class Control:
         delay = 2
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
-        # lower z to allow lifting up front legs
         # self.move_position(0, 0, 80)
         # time.sleep(delay)
 
