@@ -423,7 +423,7 @@ class Control:
                     time.sleep(delay)
 
     def climb_stair(self):
-        delay = 0.5
+        delay = 1
         
         for key in LegControl.TRIPOD_PAIRS:
             pair = LegControl.TRIPOD_PAIRS[key]
@@ -434,7 +434,6 @@ class Control:
             self.lift_legs(pair)
             time.sleep(delay)
 
-            self.stair_move(35, pair)
             self.stair_move(35, pair)
             self.stair_move(0)
             time.sleep(delay)
