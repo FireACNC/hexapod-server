@@ -445,8 +445,8 @@ class Control:
         self.lift_legs([front_left])
         time.sleep(delay)
 
-        self.stair_move(35, [front_left])
-        self.stair_move(35, [front_left])
+        for _ in range(5):
+            self.stair_move(35, [front_left])
         self.stair_move(0)
         time.sleep(delay)
 
@@ -468,6 +468,8 @@ class Control:
         # restore z
         # also resetting lifted limbs
         self.move_position(0, 0, 0)
+        self.stair_move(0)
+        # self.run_gait(['CMD_MOVE', '0', '0', '25', '10', '0'])
 
     def lift_legs(self, legs, Z = 200):
         delay = 0.01
