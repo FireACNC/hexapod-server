@@ -425,7 +425,8 @@ class Control:
     def climb_stair(self):
         delay = 0.5
         
-        for pair in LegControl.TRIPOD_PAIRS:
+        for key in LegControl.TRIPOD_PAIRS:
+            pair = LegControl.TRIPOD_PAIRS[key]
             # lower z to allow lifting up front legs
             self.move_position(0, 0, -15)
             time.sleep(delay)
