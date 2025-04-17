@@ -657,8 +657,8 @@ class Control:
         # self.transform_coordinates(points)
         # self.set_leg_angles()
 
-        self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
-        time.sleep(delay * 2)
+        # self.move_leg_positions(0, 0, 80, LegControl.TRIPOD_PAIRS[LegControl.BACK])
+        # time.sleep(delay)
 
         # restore z
         # also resetting lifted limbs
