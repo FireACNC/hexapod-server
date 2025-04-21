@@ -436,7 +436,7 @@ class Control:
 
     # specified legs and move them only
     def move_leg_positions(self, x, y, z, legs):
-        delay = 1
+        delay = 2
 
         # points = copy.deepcopy(self.body_points)
         for i in legs:
@@ -667,14 +667,14 @@ class Control:
         self.move_leg_positions(0, 0, 80, back_pair)
         self.move_leg_positions(0, -50, -40, middle_pair)
         self.move_leg_positions(0, 0, 60, middle_pair)
-        self.move_leg_positions(0, 30, 0, middle_pair)
+        self.move_leg_positions(0, 20, 0, middle_pair)
+        self.move_leg_positions(0, 20, -10, front_pair)
         self.move_leg_positions(0, -60, 0, back_pair)
         self.move_leg_positions(0, 0, 40, back_pair)
         self.move_leg_positions(0, 30, 50, front_pair)
         self.move_leg_positions(0, 0, 50, front_pair)
         self.move_leg_positions(0, -30, 0, middle_pair)
         self.move_leg_positions(0, 0, 40, middle_pair)
-        self.move_leg_positions(0, 30, 0, middle_pair)
         self.move_leg_positions(0, -30, 20, front_pair)
         self.move_leg_positions(0, 0, 50, back_pair)
         # self.move_leg_positions(0, 0, 0, front_pair)
