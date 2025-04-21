@@ -448,9 +448,10 @@ class Control:
 
     def lift_legs(self, legs, Z = 200):
         delay = 0.01
+        points = copy.deepcopy(self.body_points)
         for leg in legs:
-            self.body_points[leg][2] = Z + self.body_height
-        self.transform_coordinates(self.body_points)
+            points[leg][2] = Z + self.body_height
+        self.transform_coordinates(points)
         self.set_leg_angles()
         time.sleep(delay)
 
@@ -646,7 +647,7 @@ class Control:
                 time.sleep(delay)
 
     def climb_stair(self):
-        delay = 2
+        delay = 0.5
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         middle_pair = LegControl.TRIPOD_PAIRS[LegControl.MIDDLE]
@@ -660,6 +661,27 @@ class Control:
 
         self.lift_legs(front_pair)
         time.sleep(delay)
+
+        self.move_leg_positions(0, 0, 80, back_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -30, 0, middle_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -30, 50, middle_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -60, 60, back_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -60, 100, back_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, 30, -50, front_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -60, 50, middle_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, -60, 100, middle_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, 0, -30, front_pair)
+        time.sleep(delay)
+        self.move_leg_positions(0, 0, 0, front_pair)
+
 
         # for _ in range(3):
         #     self.stair_move(35, front_pair + middle_pair)
