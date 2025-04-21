@@ -647,7 +647,7 @@ class Control:
                 time.sleep(delay)
 
     def climb_stair(self):
-        delay = 0.5
+        delay = 1
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         middle_pair = LegControl.TRIPOD_PAIRS[LegControl.MIDDLE]
