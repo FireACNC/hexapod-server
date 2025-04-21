@@ -442,7 +442,7 @@ class Control:
         for i in legs:
             self.body_points[i][0] = self.body_points[i][0] - x
             self.body_points[i][1] = self.body_points[i][1] - y
-            self.body_points[i][2] = -30 - z
+            self.body_points[i][2] = self.body_points[i][2] - z
             self.body_height = self.body_points[i][2]
             # self.body_points[i][2] = self.body_points[i][2]
         self.transform_coordinates(self.body_points)
@@ -659,7 +659,7 @@ class Control:
         # self.move_position(0, 0, 80)
         # time.sleep(delay)
 
-        self.move_leg_positions(0, 0, 80, front_pair)
+        self.move_leg_positions(0, 0, 80, back_pair)
         self.move_leg_positions(0, 0, 50, middle_pair)
 
         # self.lift_legs(front_pair)
