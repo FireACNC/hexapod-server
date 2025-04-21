@@ -659,8 +659,8 @@ class Control:
         # self.move_position(0, 0, 80)
         # time.sleep(delay)
 
-        self.move_leg_positions(0, 0, 80, back_pair)
-        self.move_leg_positions(0, 0, 50, middle_pair)
+        self.move_leg_positions(0, 0, 75, front_pair)
+        self.move_leg_positions(0, 0, 45, middle_pair)
 
         # self.lift_legs(front_pair)
         self.move_leg_positions(0, 0, -200, front_pair)
