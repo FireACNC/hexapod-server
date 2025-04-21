@@ -661,7 +661,7 @@ class Control:
         # self.transform_coordinates(points)
         # self.set_leg_angles()
 
-        self.move_leg_positions(0, 0, 80, back_pair)
+        self.move_leg_positions(0, 0, 120, back_pair)
         time.sleep(delay)
 
         # restore z
