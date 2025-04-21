@@ -140,7 +140,7 @@ class Server:
                     command_array = command_array[:-1]  
             for single_command in command_array:
                 command_parts = single_command.split("#")
-                print("cmd parts:", command_parts)
+                # print("cmd parts:", command_parts)
                 if command_parts == None or command_parts[0] == '':
                     continue
                 elif cmd.CMD_BUZZER in command_parts:
