@@ -167,15 +167,17 @@ class Control:
                 self.set_leg_angles()
                 self.status_flag = 0x02
                 self.command_queue = ['', '', '', '', '', '']
-            elif cmd.CMD_MOVE in self.command_queue and len(self.command_queue) == 6:
-                if self.command_queue[2] == "0" and self.command_queue[3] == "0":
-                    self.run_gait(self.command_queue)
-                    self.command_queue = ['', '', '', '', '', '']
-                else:
-                    if self.status_flag != 0x03:
-                        self.relax(False)
-                    self.run_gait(self.command_queue)
-                    self.status_flag = 0x03
+            elif cmd.CMD_MOVE in self.command_queue:
+                print(self.command_queue)
+                if len(self.command_queue) == 6:
+                    if self.command_queue[2] == "0" and self.command_queue[3] == "0":
+                        self.run_gait(self.command_queue)
+                        self.command_queue = ['', '', '', '', '', '']
+                    else:
+                        if self.status_flag != 0x03:
+                            self.relax(False)
+                        self.run_gait(self.command_queue)
+                        self.status_flag = 0x03
 
             elif cmd.CMD_STAIR in self.command_queue:
                 if self.status_flag != 0x10:
