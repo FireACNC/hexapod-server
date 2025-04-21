@@ -1,6 +1,5 @@
 class COMMAND:
     CMD_MOVE = "CMD_MOVE"
-    CMD_STAIR = "CMD_STAIR"
     CMD_LED_MOD = "CMD_LED_MOD"
     CMD_LED = "CMD_LED"
     CMD_SONIC = "CMD_SONIC"
@@ -15,5 +14,7 @@ class COMMAND:
     CMD_CAMERA = "CMD_CAMERA"
     CMD_SERVOPOWER = "CMD_SERVOPOWER"
     
+    CMD_STAIR = "CMD_STAIR"
+    CMD_PAIR_MOVE = "CMD_PAIR_MOVE"
     def __init__(self):
         pass

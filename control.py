@@ -186,6 +186,15 @@ class Control:
                 self.command_queue = ['', '', '', '', '', '']
                 self.status_flag = 0x10
 
+            elif cmd.CMD_PAIR_MOVE in self.command_queue:
+                pair_index = self.command_queue[1]
+                x = self.command_queue[2]
+                y = self.command_queue[3]
+                z = self.command_queue[4]
+                pair = LegControl.TRIPOD_PAIRS[pair_index]
+                self.move_leg_positions(x, y, z, pair)
+                self.command_queue = ['', '', '', '', '', '']
+
             elif cmd.CMD_BALANCE in self.command_queue and len(self.command_queue) == 2:
                 if self.command_queue[1] == "1":
                     self.command_queue = ['', '', '', '', '', '']
@@ -661,13 +670,13 @@ class Control:
         # self.transform_coordinates(points)
         # self.set_leg_angles()
 
-        self.move_leg_positions(0, 0, 120, back_pair)
-        time.sleep(delay * 10)
+        # self.move_leg_positions(0, 0, 120, back_pair)
+        # time.sleep(delay * 10)
 
         # restore z
         # also resetting lifted limbs
-        self.move_position(0, 0, 0)
-        self.stair_move(0)
+        # self.move_position(0, 0, 0)
+        # self.stair_move(0)
 
 
 if __name__ == '__main__':
