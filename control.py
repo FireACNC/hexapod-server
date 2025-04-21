@@ -192,6 +192,7 @@ class Control:
                 y = int(self.command_queue[3])
                 z = int(self.command_queue[4])
                 pair = LegControl.TRIPOD_PAIRS[pair_index]
+                print("Pair move: ", x, y, z, pair)
                 self.move_leg_positions(x, y, z, pair)
                 self.command_queue = ['', '', '', '', '', '']
 
