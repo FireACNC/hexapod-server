@@ -20,6 +20,7 @@ class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
         self.frame = None
         self.condition = Condition()
+        self.warned_battery = False
 
     def write(self, buf):
         with self.condition:
@@ -151,7 +152,8 @@ class Server:
                         response_command = cmd.CMD_POWER + "#" + str(battery_voltage[0]) + "#" + str(battery_voltage[1]) + "\n"
                         # print(command)
                         self.send_data(self.command_connection, response_command)
-                        if battery_voltage[0] < 5.5 or battery_voltage[1] < 6:
+                        if battery_voltage[0] < 5.5 or battery_voltage[1] < 6 and not self.warned_battery:
+                            self.warned_battery = True
                             for _ in range(3):
                                 self.buzzer_controller.set_state(True)
                                 time.sleep(0.15)
