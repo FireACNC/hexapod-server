@@ -187,10 +187,10 @@ class Control:
                 self.status_flag = 0x10
 
             elif cmd.CMD_PAIR_MOVE in self.command_queue:
-                pair_index = self.command_queue[1]
-                x = self.command_queue[2]
-                y = self.command_queue[3]
-                z = self.command_queue[4]
+                pair_index = int(self.command_queue[1])
+                x = int(self.command_queue[2])
+                y = int(self.command_queue[3])
+                z = int(self.command_queue[4])
                 pair = LegControl.TRIPOD_PAIRS[pair_index]
                 self.move_leg_positions(x, y, z, pair)
                 self.command_queue = ['', '', '', '', '', '']
