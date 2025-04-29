@@ -682,43 +682,16 @@ class Control:
         self.move_leg_positions(0, 0, -200, middle_pair)
         # self.move_leg_positions(0, 40, 0, middle_pair)
 
-        self.move_leg_positions(0, -60, -40, [front_pair[0]])
-        self.move_leg_positions(0, 0, 40, [front_pair[0]])
-        self.move_leg_positions(0, -60, -40, [back_pair[0]])
-        self.move_leg_positions(0, 0, 70, [back_pair[0]])
-        self.move_leg_positions(0, -60, -40, [front_pair[1]])
-        self.move_leg_positions(0, 0, 40, [front_pair[1]])
-        self.move_leg_positions(0, -60, -40, [back_pair[1]])
-        self.move_leg_positions(0, 0, 70, [back_pair[1]])
-        self.move_leg_positions(0, 60, 0, back_pair)
-        self.move_leg_positions(0, 60, 0, front_pair)
-
-
-
-        # self.move_leg_positions(0, -30, 0, middle_pair)
-        # self.move_leg_positions(0, 0, 40, middle_pair)
-        # self.move_leg_positions(0, -30, 20, front_pair)
-        # self.move_leg_positions(0, 0, 50, back_pair)
-        # self.move_leg_positions(0, 0, 0, front_pair)
-
-
-        # for _ in range(3):
-        #     self.stair_move(35, front_pair + middle_pair)
-        # self.stair_move(0)
-        # time.sleep(delay)
-
-        # roll, pitch, yaw = 0, -15, 0
-        # points = self.calculate_posture_balance(roll, pitch, yaw)
-        # self.transform_coordinates(points)
-        # self.set_leg_angles()
-
-        # self.move_leg_positions(0, 0, 120, back_pair)
-        # time.sleep(delay * 10)
-
-        # restore z
-        # also resetting lifted limbs
-        # self.move_position(0, 0, 0)
-        # self.stair_move(0)
+        # self.move_leg_positions(0, -60, -40, [front_pair[0]])
+        # self.move_leg_positions(0, 0, 40, [front_pair[0]])
+        # self.move_leg_positions(0, -60, -40, [back_pair[0]])
+        # self.move_leg_positions(0, 0, 70, [back_pair[0]])
+        # self.move_leg_positions(0, -60, -40, [front_pair[1]])
+        # self.move_leg_positions(0, 0, 40, [front_pair[1]])
+        # self.move_leg_positions(0, -60, -40, [back_pair[1]])
+        # self.move_leg_positions(0, 0, 70, [back_pair[1]])
+        # self.move_leg_positions(0, 60, 0, back_pair)
+        # self.move_leg_positions(0, 60, 0, front_pair)
 
 
 if __name__ == '__main__':
