@@ -722,11 +722,11 @@ class Control:
         self.move_leg_positions(0, 100, 20, middle_pair)
         time.sleep(delay)
 
-        self.move_leg_positions(0, 0, -10, middle_pair)
-        self.move_leg_positions(0, 0, 10, front_pair)
+        self.move_leg_positions(0, 0, -20, middle_pair)
+        # self.move_leg_positions(0, 0, 0, front_pair)
         time.sleep(delay)
 
-        # self.move_leg_positions(0, 0, -180, back_pair)
+        self.move_leg_positions(0, 0, -200, back_pair)
         time.sleep(delay)
 
         # CMD_PAIR_MOVE#2#0#0#-200
