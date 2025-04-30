@@ -674,16 +674,20 @@ class Control:
         self.move_leg_positions(0, 0, 60, [back_pair[0]])
         self.move_leg_positions(0, -60, -40, [back_pair[1]])
         self.move_leg_positions(0, 0, 60, [back_pair[1]])
-        self.move_leg_positions(0, 0, 0, back_pair)
         self.move_leg_positions(0, 30, 50, front_pair)
         self.move_leg_positions(0, 0, 50, front_pair)
         self.move_leg_positions(0, 0, 50, front_pair)
 
         self.move_leg_positions(0, 30, 40, back_pair)
         self.move_leg_positions(0, 0, -100, middle_pair)
-        # self.move_leg_positions(0, 60, -110, front_pair)
+        self.move_leg_positions(0, 60, -110, front_pair)
         # self.move_leg_positions(0, -60, 0, front_pair)
         # self.move_leg_positions(0, 0, -50, front_pair)
+
+        # CMD_PAIR_MOVE#0#0#100#30?
+
+        # CMD_PAIR_MOVE#1#0#50#0 * 3?
+
         # self.move_leg_positions(0, -20, -100, [front_pair[0]])
         # self.move_leg_positions(0, -20, -100, [front_pair[1]])
 
