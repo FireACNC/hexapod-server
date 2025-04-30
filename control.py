@@ -653,7 +653,7 @@ class Control:
 
     def climb_stair(self):
         delay = 1
-            
+
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         middle_pair = LegControl.TRIPOD_PAIRS[LegControl.MIDDLE]
         back_pair = LegControl.TRIPOD_PAIRS[LegControl.BACK]
@@ -661,13 +661,15 @@ class Control:
         # time.sleep(delay)
 
         self.move_leg_positions(0, 0, 75, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 45, middle_pair)
-        time.sleep(delay * 2)
+        time.sleep(delay)
 
         # self.lift_legs(front_pair)
         self.move_leg_positions(0, 0, -220, front_pair)
         time.sleep(delay)
         self.move_leg_positions(0, 0, 80, back_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, -70, -40, middle_pair)
         time.sleep(delay)
 
@@ -689,10 +691,12 @@ class Control:
         self.move_leg_positions(0, 30, 50, front_pair)
         time.sleep(delay)
         self.move_leg_positions(0, 0, 50, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 50, front_pair)
         time.sleep(delay)
 
         self.move_leg_positions(0, 30, 40, back_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, -150, middle_pair)
         time.sleep(delay)
         self.move_leg_positions(0, 60, -110, front_pair)
