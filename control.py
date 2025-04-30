@@ -685,6 +685,10 @@ class Control:
         self.move_leg_positions(0, 100, 100, front_pair)
         self.move_leg_positions(0, -30, -100, front_pair)
         self.move_leg_positions(0, -70, 0, front_pair)
+
+        self.move_leg_positions(0, -100, -20, middle_pair)
+        self.move_leg_positions(0, 100, 30, middle_pair)
+
         # self.move_leg_positions(0, 0, -50, front_pair)
 
         # CMD_PAIR_MOVE#0#0#100#30?
