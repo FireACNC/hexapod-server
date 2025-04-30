@@ -136,9 +136,10 @@ class Control:
         leg_lengths = [0] * 6
         for i in range(6):
             leg_lengths[i] = math.sqrt(self.leg_positions[i][0] ** 2 + self.leg_positions[i][1] ** 2 + self.leg_positions[i][2] ** 2)
-        for length in leg_lengths:
+        for i, length in enumerate(leg_lengths):
             if length > 248 or length < 90:
                 is_valid = False
+                print(f"Out of bound: leg {i} has {self.leg_positions[i][0]}, {self.leg_positions[i][1]}, {self.leg_positions[i][2]}")
         return is_valid
 
     def condition_monitor(self):
@@ -680,7 +681,10 @@ class Control:
 
         self.move_leg_positions(0, 30, 20, back_pair)
         self.move_leg_positions(0, 60, 0, front_pair)
-        # self.move_leg_positions(0, 0, -200, middle_pair)
+        self.move_leg_positions(0, 0, -50, front_pair)
+        self.move_leg_positions(0, 50, 0, [front_pair[0]])
+        self.move_leg_positions(0, -50, 0, [front_pair[1]])
+
         # self.move_leg_positions(0, 40, 0, middle_pair)
 
         # self.move_leg_positions(0, -60, -40, [front_pair[0]])
