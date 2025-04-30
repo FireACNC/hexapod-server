@@ -662,7 +662,7 @@ class Control:
 
         self.move_leg_positions(0, 0, 75, front_pair)
         self.move_leg_positions(0, 0, 45, middle_pair)
-        time.sleep(delay) * 2
+        time.sleep(delay * 2)
 
         # self.lift_legs(front_pair)
         self.move_leg_positions(0, 0, -220, front_pair)
