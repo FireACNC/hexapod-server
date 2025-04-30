@@ -448,7 +448,7 @@ class Control:
             # self.body_points[i][2] = self.body_points[i][2]
         self.transform_coordinates(self.body_points)
         self.set_leg_angles()
-        time.sleep(delay)
+        # time.sleep(delay)
 
 
     # def lift_legs(self, legs, Z = 200):
@@ -652,7 +652,7 @@ class Control:
                 time.sleep(delay)
 
     def climb_stair(self):
-        delay = 2
+        delay = 0.5
     
         front_left, front_right = front_pair = LegControl.TRIPOD_PAIRS[LegControl.FRONT]
         middle_pair = LegControl.TRIPOD_PAIRS[LegControl.MIDDLE]
@@ -662,35 +662,63 @@ class Control:
 
         self.move_leg_positions(0, 0, 75, front_pair)
         self.move_leg_positions(0, 0, 45, middle_pair)
+        time.sleep(delay) * 2
 
         # self.lift_legs(front_pair)
         self.move_leg_positions(0, 0, -220, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 80, back_pair)
         self.move_leg_positions(0, -70, -40, middle_pair)
+        time.sleep(delay)
+
         self.move_leg_positions(0, 0, 80, middle_pair)
+        time.sleep(delay)
+
         self.move_leg_positions(0, 60, 0, middle_pair)
+        time.sleep(delay)
+
         # self.move_leg_positions(0, 20, -10, front_pair)
         self.move_leg_positions(0, -60, -40, [back_pair[0]])
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 60, [back_pair[0]])
+        time.sleep(delay)
         self.move_leg_positions(0, -60, -40, [back_pair[1]])
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 60, [back_pair[1]])
+        time.sleep(delay)
         self.move_leg_positions(0, 30, 50, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 50, front_pair)
         self.move_leg_positions(0, 0, 50, front_pair)
+        time.sleep(delay)
 
         self.move_leg_positions(0, 30, 40, back_pair)
         self.move_leg_positions(0, 0, -150, middle_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 60, -110, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, -60, 60, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 100, 100, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, -30, -100, front_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, -70, 0, front_pair)
+        time.sleep(delay)
 
         self.move_leg_positions(0, -100, 0, middle_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 0, 30, middle_pair)
+        time.sleep(delay)
         self.move_leg_positions(0, 100, 30, middle_pair)
+        time.sleep(delay)
 
-        self.move_leg_positions(0, 0, -200, back_pair)
+        self.move_leg_positions(0, 0, -10, middle_pair)
+        self.move_leg_positions(0, 0, 10, front_pair)
+        time.sleep(delay)
+
+        self.move_leg_positions(0, 0, -180, back_pair)
+        time.sleep(delay)
 
         # CMD_PAIR_MOVE#2#0#0#-200
         # CMD_PAIR_MOVE#0#0#-60#-30
